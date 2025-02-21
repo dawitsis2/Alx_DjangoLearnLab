@@ -9,7 +9,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('login')  # Redirect to the login page after successful registration
+            return redirect('login')  # Redirect to login page after successful registration
     else:
         form = UserCreationForm()
 
