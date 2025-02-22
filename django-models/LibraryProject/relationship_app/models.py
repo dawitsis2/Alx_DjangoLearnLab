@@ -2,6 +2,8 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Define roles as choices
 ROLE_CHOICES = [
@@ -19,9 +21,6 @@ class UserProfile(models.Model):
         return f"{self.user.username} - {self.role}"
 
 # Automatically create a UserProfile when a new user is created
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -30,4 +29,22 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()
+
+# Book model with custom permissions
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=100)
+    publication_date = models.DateField()
+    isbn = models.CharField(max_length=13, unique=True)
+    summary = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        permissions = [
+            ('can_add_book', 'Can add book'),
+            ('can_change_book', 'Can change book'),
+            ('can_delete_book', 'Can delete book'),
+        ]
 
