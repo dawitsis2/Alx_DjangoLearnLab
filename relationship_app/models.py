@@ -1,71 +1,39 @@
 from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
-# Define roles as choices
-ROLE_CHOICES = [
-    ('Admin', 'Admin'),
-    ('Librarian', 'Librarian'),
-    ('Member', 'Member'),
-]
-
-# Extending the User model to include roles
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='Member')
-
-    def __str__(self):
-        return f"{self.user.username} - {self.role}"
-
-# Automatically create a UserProfile when a new user is created
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.userprofile.save()
 
 # Author Model
 class Author(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)  # Name of the author
 
     def __str__(self):
-        return self.name
+        return self.name  # Display author's name in admin and queries
+
 
 # Book Model
 class Book(models.Model):
-    title = models.CharField(max_length=200)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)  # Link to Author model
-    publication_date = models.DateField()
-    isbn = models.CharField(max_length=13, unique=True)
-    summary = models.TextField()
+    title = models.CharField(max_length=200)  # Title of the book
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)  # Book linked to an Author
+    publication_date = models.DateField()  # Optional: Add publication date
+    isbn = models.CharField(max_length=13, unique=True)  # Optional: Unique ISBN
+    summary = models.TextField(blank=True)  # Optional: Summary of the book
 
     def __str__(self):
-        return self.title
+        return self.title  # Display book title in admin and queries
 
-    class Meta:
-        permissions = [
-            ('can_add_book', 'Can add book'),
-            ('can_change_book', 'Can change book'),
-            ('can_delete_book', 'Can delete book'),
-        ]
 
 # Library Model
 class Library(models.Model):
-    name = models.CharField(max_length=200)
-    books = models.ManyToManyField(Book)  # Many-to-Many relationship with Book
+    name = models.CharField(max_length=200)  # Name of the library
+    books = models.ManyToManyField(Book)  # Library has many books
 
     def __str__(self):
-        return self.name
+        return self.name  # Display library name in admin and queries
+
 
 # Librarian Model
 class Librarian(models.Model):
-    name = models.CharField(max_length=100)
-    library = models.OneToOneField(Library, on_delete=models.CASCADE)  # One-to-One relationship with Library
+    name = models.CharField(max_length=100)  # Name of the librarian
+    library = models.OneToOneField(Library, on_delete=models.CASCADE)  # Each library has one librarian
 
     def __str__(self):
-        return self.name
+        return self.name  # Display librarian's name in admin and queries
 

@@ -1,3 +1,4 @@
+
 # views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, permission_required
@@ -79,3 +80,8 @@ def delete_book(request, book_id):
         messages.success(request, "Book deleted successfully.")
         return redirect('list_books')
     return render(request, 'relationship_app/delete_book.html', {'book': book})
+
+
+
+
+
