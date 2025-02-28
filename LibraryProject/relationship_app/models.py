@@ -11,8 +11,11 @@ class Author(models.Model):
 # Book Model
 class Book(models.Model):
     title = models.CharField(max_length=200)  # Title of the book
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)  # Book linked to an Author
-    publication_date = models.DateField()  # Optional: Add publication date
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)  # Book linked to an Autho
+    publication_date = models.DateField(null=True, blank=True)
+
+
+
     isbn = models.CharField(max_length=13, unique=True)  # Optional: Unique ISBN
     summary = models.TextField(blank=True)  # Optional: Summary of the book
 
